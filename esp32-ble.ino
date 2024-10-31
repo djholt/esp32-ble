@@ -1,17 +1,20 @@
 #include <BLEDevice.h>
-#include "heltec.h"
+#include <Wire.h>
+#include "HT_SSD1306Wire.h"
 
 #define DEVICE_NAME         "DJ BLE"
 #define SERVICE_UUID        "4fafc201-1fb5-459e-8fcc-c5c9c331914b"
 #define CHARACTERISTIC_UUID "beb5483e-36e1-4688-b7f5-ea07361b26a8"
 
+static SSD1306Wire display(0x3c, 500000, SDA_OLED, SCL_OLED, GEOMETRY_128_64, RST_OLED); // addr , freq , i2c group , resolution , rst
+
 BLECharacteristic *pCharacteristic;
 String message = "";
 
 void printToScreen(String s) {
-  Heltec.display->clear();
-  Heltec.display->drawString(0, 0, s);
-  Heltec.display->display();
+  display.clear();
+  display.drawString(0, 0, s);
+  display.display();
 }
 
 class MyServerCallbacks: public BLEServerCallbacks {
@@ -40,7 +43,8 @@ class MyCharacteristicCallbacks: public BLECharacteristicCallbacks {
 };
 
 void setup() {
-  Heltec.begin(true /*display*/, false /*LoRa*/, true /*Serial*/);
+  display.init();
+
   printToScreen("Starting BLE!");
 
   BLEDevice::init(DEVICE_NAME);
