@@ -43,6 +43,9 @@ class MyCharacteristicCallbacks: public BLECharacteristicCallbacks {
 };
 
 void setup() {
+  pinMode(0, INPUT_PULLUP);
+  Serial.begin(115200);
+
   display.init();
 
   printToScreen("Starting BLE!");
@@ -72,9 +75,10 @@ void setup() {
 void loop() {
   if (digitalRead(0) == LOW) {
     while (digitalRead(0) == LOW);
+    delay(50);
+    Serial.println("Button press detected!");
     message.toUpperCase();
     pCharacteristic->setValue(message.c_str());
     printToScreen("Got em.");
-    delay(250);
   }
 }
